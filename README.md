@@ -25,3 +25,4 @@ python3 backend/day1.py
 ## Docs
 
 - `docs/MAKEFILE.md` - Makefile quick intro
+- `docs/MAKEFILE_GUIDE.md` - Makefile learning notes
