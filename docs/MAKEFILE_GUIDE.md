@@ -10,9 +10,11 @@
 
 ## 2. 最小例子
 
+文档中的 `make` 代码块里使用 `\t` 表示 Tab。
+
 ```make
 hello:
-	@echo "hello world"
+\t@echo "hello world"
 ```
 
 执行：
@@ -22,6 +24,7 @@ make hello
 ```
 
 说明：
+
 - `hello` 是目标名
 - `@` 表示不打印命令本身（只打印结果）
 
@@ -29,11 +32,12 @@ make hello
 
 ```make
 目标名: 依赖1 依赖2
-	命令1
-	命令2
+\t命令1
+\t命令2
 ```
 
 解释：
+
 - “依赖”会先执行（如果有规则）
 - 再执行目标下的命令
 
@@ -44,7 +48,7 @@ PY=python3
 APP=backend/day1.py
 
 run:
-	$(PY) $(APP)
+\t$(PY) $(APP)
 ```
 
 执行：
@@ -60,6 +64,7 @@ make run
 ```
 
 作用：
+
 - 告诉 `make`：这些目标不对应真实文件
 - 防止同名文件干扰执行
 
@@ -69,19 +74,19 @@ make run
 .PHONY: help setup run clean
 
 help:
-	@echo "make setup - create venv and install deps"
-	@echo "make run   - run the app"
-	@echo "make clean - cleanup"
+\t@echo "make setup - create venv and install deps"
+\t@echo "make run   - run the app"
+\t@echo "make clean - cleanup"
 
 setup:
-	python3 -m venv .venv
-	. .venv/bin/activate && pip install -r requirements.txt
+\tpython3 -m venv .venv
+\t. .venv/bin/activate && pip install -r requirements.txt
 
 run:
-	python3 backend/day1.py
+\tpython3 backend/day1.py
 
 clean:
-	rm -rf .venv __pycache__
+\trm -rf .venv __pycache__
 ```
 
 ## 7. 常见坑
@@ -99,6 +104,7 @@ clean:
 ## 9. 下一步
 
 当你熟悉后，可以学习：
+
 - 变量覆盖（命令行传参）
 - 条件判断
 - 多文件编译（大型项目）
@@ -109,7 +115,7 @@ clean:
 PY=python3
 
 ver:
-	$(PY) --version
+\t$(PY) --version
 ```
 
 执行：
@@ -125,29 +131,31 @@ make ver PY=python
 .DEFAULT_GOAL := help
 
 help:
-	@echo "make run / make setup / make clean"
+\t@echo "make run / make setup / make clean"
 ```
 
 说明：
+
 - 直接 `make` 会跑 `help`
 
 ## 12. 自动变量（看懂规则就行）
 
 ```make
 target: dep1 dep2
-	@echo $@   # 目标名
-	@echo $^   # 所有依赖
-	@echo $<   # 第一个依赖
+\t@echo $@   # 目标名
+\t@echo $^   # 所有依赖
+\t@echo $<   # 第一个依赖
 ```
 
 ## 13. 简单模式规则（批量处理）
 
 ```make
 %.txt: %.md
-	@echo "convert $< to $@"
+\t@echo "convert $< to $@"
 ```
 
 说明：
+
 - `%` 是通配符
 - 适合批量处理文件
 
@@ -158,6 +166,7 @@ include Makefile.local
 ```
 
 说明：
+
 - `Makefile.local` 可以放你自己的私有配置
 - 不建议提交到 Git（可加入 `.gitignore`）
 
@@ -165,10 +174,10 @@ include Makefile.local
 
 ```make
 clean:
-	rm -rf .venv __pycache__
+\trm -rf .venv __pycache__
 
 lint:
-	python3 -m py_compile backend/day1.py
+\tpython3 -m py_compile backend/day1.py
 ```
 
 ## 16. 小练习（进阶一点）
@@ -190,13 +199,14 @@ OS := $(shell uname -s)
 
 open:
 ifeq ($(OS),Darwin)
-	open .
+\topen .
 else
-	@echo "Use xdg-open . on Linux"
+\t@echo "Use xdg-open . on Linux"
 endif
 ```
 
 说明：
+
 - `ifeq` / `endif` 是条件块
 - `$(shell ...)` 可以执行 shell 命令并拿到结果
 
@@ -206,7 +216,7 @@ endif
 FILE ?= backend/day1.py
 
 run:
-	python3 $(FILE)
+\tpython3 $(FILE)
 ```
 
 执行：
@@ -217,6 +227,7 @@ make run FILE=backend/other.py
 ```
 
 说明：
+
 - `?=` 表示“如果没传入就用默认值”
 
 ## 20. 多行命令与 .ONESHELL
@@ -225,12 +236,13 @@ make run FILE=backend/other.py
 .ONESHELL:
 
 setup:
-	python3 -m venv .venv
-	source .venv/bin/activate
-	pip install -r requirements.txt
+\tpython3 -m venv .venv
+\tsource .venv/bin/activate
+\tpip install -r requirements.txt
 ```
 
 说明：
+
 - 默认每一行命令都会开启新 shell
 - `.ONESHELL` 让同一目标里使用同一个 shell
 
@@ -240,10 +252,11 @@ setup:
 .SILENT:
 
 version:
-	python3 --version
+\tpython3 --version
 ```
 
 说明：
+
 - `.SILENT` 会隐藏命令本身，只显示输出
 - 或者单行用 `@` 隐藏
 
@@ -251,17 +264,18 @@ version:
 
 ```make
 fmt:
-	python3 -m pip install black
-	python3 -m black backend/
+\tpython3 -m pip install black
+\tpython3 -m black backend/
 
 lint:
-	python3 -m py_compile backend/day1.py
+\tpython3 -m py_compile backend/day1.py
 
 test:
-	python3 -m unittest discover -s tests -p "test_*.py"
+\tpython3 -m unittest discover -s tests -p "test_*.py"
 ```
 
 说明：
+
 - 这些目标只是示例，你可以按项目需求改
 
 ## 23. 小结（你先掌握这些就够）
@@ -281,35 +295,36 @@ PY=python3
 APP=backend/day1.py
 
 help:
-	@echo "make setup - create venv and install deps"
-	@echo "make run   - run the app"
-	@echo "make fmt   - format code (black)"
-	@echo "make lint  - quick syntax check"
-	@echo "make test  - run tests"
-	@echo "make clean - cleanup"
+\t@echo "make setup - create venv and install deps"
+\t@echo "make run   - run the app"
+\t@echo "make fmt   - format code (black)"
+\t@echo "make lint  - quick syntax check"
+\t@echo "make test  - run tests"
+\t@echo "make clean - cleanup"
 
 setup:
-	$(PY) -m venv .venv
-	. .venv/bin/activate && pip install -r requirements.txt
+\t$(PY) -m venv .venv
+\t. .venv/bin/activate && pip install -r requirements.txt
 
 run:
-	$(PY) $(APP)
+\t$(PY) $(APP)
 
 fmt:
-	$(PY) -m pip install black
-	$(PY) -m black backend/
+\t$(PY) -m pip install black
+\t$(PY) -m black backend/
 
 lint:
-	$(PY) -m py_compile $(APP)
+\t$(PY) -m py_compile $(APP)
 
 test:
-	$(PY) -m unittest discover -s tests -p "test_*.py"
+\t$(PY) -m unittest discover -s tests -p "test_*.py"
 
 clean:
-	rm -rf .venv __pycache__
+\trm -rf .venv __pycache__
 ```
 
 说明：
+
 - 你可以把 `APP` 改成别的脚本
 - 暂时没测试也没关系，`test` 只是模板
 
@@ -324,7 +339,7 @@ clean:
 
 ## 26. 常见错误示例
 
-**错误 1：Tab 写成空格**
+### 错误 1：Tab 写成空格
 
 ```make
 run:
@@ -332,15 +347,16 @@ run:
 ```
 
 会报：
-```
+
+```text
 missing separator
 ```
 
-**正确写法：**
+### 正确写法
 
 ```make
 run:
-	python3 backend/day1.py
+\tpython3 backend/day1.py
 ```
 
 ## 27. 建议的学习顺序

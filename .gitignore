@@ -33,4 +33,6 @@ ENV/
 
 # Editors
 .vscode/
+!.vscode/
+!.vscode/settings.json
 .idea/
