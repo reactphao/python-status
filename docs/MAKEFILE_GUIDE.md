@@ -182,3 +182,90 @@ lint:
 - 报错 “missing separator” 通常是 **Tab** 写成了空格
 - `make` 找不到命令：检查该命令是否装在系统里
 - 变量没有生效：检查变量名是否拼写一致
+
+## 18. 条件判断（只需会看懂）
+
+```make
+OS := $(shell uname -s)
+
+open:
+ifeq ($(OS),Darwin)
+	open .
+else
+	@echo "Use xdg-open . on Linux"
+endif
+```
+
+说明：
+- `ifeq` / `endif` 是条件块
+- `$(shell ...)` 可以执行 shell 命令并拿到结果
+
+## 19. 默认值与覆盖
+
+```make
+FILE ?= backend/day1.py
+
+run:
+	python3 $(FILE)
+```
+
+执行：
+
+```bash
+make run
+make run FILE=backend/other.py
+```
+
+说明：
+- `?=` 表示“如果没传入就用默认值”
+
+## 20. 多行命令与 .ONESHELL
+
+```make
+.ONESHELL:
+
+setup:
+	python3 -m venv .venv
+	source .venv/bin/activate
+	pip install -r requirements.txt
+```
+
+说明：
+- 默认每一行命令都会开启新 shell
+- `.ONESHELL` 让同一目标里使用同一个 shell
+
+## 21. 安静模式与打印
+
+```make
+.SILENT:
+
+version:
+	python3 --version
+```
+
+说明：
+- `.SILENT` 会隐藏命令本身，只显示输出
+- 或者单行用 `@` 隐藏
+
+## 22. 和 Python 常见任务绑定
+
+```make
+fmt:
+	python3 -m pip install black
+	python3 -m black backend/
+
+lint:
+	python3 -m py_compile backend/day1.py
+
+test:
+	python3 -m unittest discover -s tests -p "test_*.py"
+```
+
+说明：
+- 这些目标只是示例，你可以按项目需求改
+
+## 23. 小结（你先掌握这些就够）
+
+- 会用 `make 目标名`，知道 Tab 要求
+- 会写目标 + 命令，理解变量
+- 能看懂常见 Makefile，不会也知道查哪里
