@@ -21,3 +21,7 @@ pip install -r requirements.txt
 ```bash
 python3 backend/day1.py
 ```
+
+## Docs
+
+- `docs/MAKEFILE.md` - Makefile quick intro
