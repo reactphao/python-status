@@ -269,3 +269,83 @@ test:
 - 会用 `make 目标名`，知道 Tab 要求
 - 会写目标 + 命令，理解变量
 - 能看懂常见 Makefile，不会也知道查哪里
+
+## 24. 实战模板（适合 Python 小项目）
+
+```make
+.PHONY: help setup run clean fmt lint test
+
+.DEFAULT_GOAL := help
+
+PY=python3
+APP=backend/day1.py
+
+help:
+	@echo "make setup - create venv and install deps"
+	@echo "make run   - run the app"
+	@echo "make fmt   - format code (black)"
+	@echo "make lint  - quick syntax check"
+	@echo "make test  - run tests"
+	@echo "make clean - cleanup"
+
+setup:
+	$(PY) -m venv .venv
+	. .venv/bin/activate && pip install -r requirements.txt
+
+run:
+	$(PY) $(APP)
+
+fmt:
+	$(PY) -m pip install black
+	$(PY) -m black backend/
+
+lint:
+	$(PY) -m py_compile $(APP)
+
+test:
+	$(PY) -m unittest discover -s tests -p "test_*.py"
+
+clean:
+	rm -rf .venv __pycache__
+```
+
+说明：
+- 你可以把 `APP` 改成别的脚本
+- 暂时没测试也没关系，`test` 只是模板
+
+## 25. 常用写法速记
+
+- `VAR=xxx` 定义变量
+- `VAR ?= xxx` 默认值
+- `$(VAR)` 引用变量
+- `@` 隐藏命令本身
+- `.PHONY` 保护目标
+- `.DEFAULT_GOAL` 设置默认目标
+
+## 26. 常见错误示例
+
+**错误 1：Tab 写成空格**
+
+```make
+run:
+    python3 backend/day1.py
+```
+
+会报：
+```
+missing separator
+```
+
+**正确写法：**
+
+```make
+run:
+	python3 backend/day1.py
+```
+
+## 27. 建议的学习顺序
+
+1. 学会用：`make run`
+2. 学会看：变量 + 目标结构
+3. 学会改：把 `APP` 换成你自己的脚本
+4. 学会扩展：加 `fmt/lint/test`
